@@ -8,6 +8,8 @@ Config.Volume = 0.8
 
 -- Disable/enable Notifications
 Config.Notification = true
+Config.Strings = {seatbelt_on = 'Seatbelt: ~g~connected', seatbelt_off = 'Seatbelt: ~r~disconnected'}
+-- Change to your own translations.
 
 -- Disable/enable blinker image
 Config.Blinker = true

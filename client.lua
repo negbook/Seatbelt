@@ -1,3 +1,6 @@
+--- "Ramsus" ---
+
+
 local isUiOpen = false 
 local speedBuffer  = {}
 local velBuffer    = {}
@@ -29,8 +32,6 @@ function Fwv(entity)
   hr = hr * 0.0174533
   return { x = math.cos(hr) * 2.0, y = math.sin(hr) * 2.0 }
 end
-
-
  
 Citizen.CreateThread(function()
 	while true do
@@ -39,7 +40,6 @@ Citizen.CreateThread(function()
     local ped = PlayerPedId()
     local car = GetVehiclePedIsIn(ped)
 
-    
     if car ~= 0 and (wasInCar or IsCar(car)) then
       wasInCar = true
           if isUiOpen == false and not IsPlayerDead(PlayerId()) then
@@ -57,8 +57,6 @@ Citizen.CreateThread(function()
       speedBuffer[2] = speedBuffer[1]
       speedBuffer[1] = GetEntitySpeed(car)
 
-
-      
       if not beltOn and speedBuffer[2] ~= nil and GetEntitySpeedVector(car, true).y > 1.0 and speedBuffer[1] > (Config.Speed / 3.6) and (speedBuffer[2] - speedBuffer[1]) > (speedBuffer[1] * 0.255) then
         local co = GetEntityCoords(ped)
         local fw = Fwv(ped)
@@ -80,7 +78,7 @@ Citizen.CreateThread(function()
         TriggerEvent("seatbelt:sounds", "buckle", Config.Volume)
         end
         if Config.Notification then
-        Notify('Seatbelt: ~g~connected')
+        Notify(Config.Strings.seatbelt_on)
         end
         
         if Config.Blinker then
@@ -89,7 +87,7 @@ Citizen.CreateThread(function()
         isUiOpen = true 
       else 
         if Config.Notification then
-        Notify('Seatbelt: ~r~disconnected')
+        Notify(Config.Strings.seatbelt_off)
         end
 
         if Config.Sounds then
