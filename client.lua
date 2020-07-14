@@ -38,6 +38,7 @@ Citizen.CreateThread(function()
   
     local ped = PlayerPedId()
     local car = GetVehiclePedIsIn(ped)
+
     
     if car ~= 0 and (wasInCar or IsCar(car)) then
       wasInCar = true
@@ -122,6 +123,15 @@ Citizen.CreateThread(function()
 		if (IsPlayerDead(PlayerId()) and isUiOpen == true) or IsPauseMenuActive() then
 			SendNUIMessage({displayWindow = 'false'})
 			isUiOpen = false
+		end    
+	end
+end)
+
+Citizen.CreateThread(function()
+	while true do
+		Citizen.Wait(3500)
+    if not beltOn and wasInCar and not IsPauseMenuActive() and Config.LoopSound then
+      TriggerEvent("seatbelt:sounds", "seatbelt", 0.9)
 		end    
 	end
 end)

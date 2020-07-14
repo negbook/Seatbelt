@@ -2,6 +2,7 @@ Config = {}
 
 -- Disable/enable sounds
 Config.Sounds = true
+Config.LoopSound = false
 
 -- Disable/enable Notifications
 Config.Notification = true
