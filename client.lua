@@ -77,7 +77,7 @@ Citizen.CreateThread(function()
           Citizen.Wait(1)
 
         if Config.Sounds then  
-        TriggerEvent("seatbelt:sounds", "buckle", 0.9)
+        TriggerEvent("seatbelt:sounds", "buckle", Config.Volume)
         end
         if Config.Notification then
         Notify('Seatbelt: ~g~connected')
@@ -93,7 +93,7 @@ Citizen.CreateThread(function()
         end
 
         if Config.Sounds then
-        TriggerEvent("seatbelt:sounds", "unbuckle", 0.9)
+        TriggerEvent("seatbelt:sounds", "unbuckle", Config.Volume)
         end
 
         if Config.Blinker then
@@ -131,7 +131,7 @@ Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(3500)
     if not beltOn and wasInCar and not IsPauseMenuActive() and Config.LoopSound then
-      TriggerEvent("seatbelt:sounds", "seatbelt", 0.9)
+      TriggerEvent("seatbelt:sounds", "seatbelt", Config.Volume)
 		end    
 	end
 end)
