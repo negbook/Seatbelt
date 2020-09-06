@@ -1,11 +1,10 @@
 --- "Ramsus" ---
 
-
 local isUiOpen = false 
-local speedBuffer  = {}
-local velBuffer    = {}
-local beltOn       = false
-local wasInCar     = false
+local speedBuffer = {}
+local velBuffer = {}
+local SeatbeltON = false
+local InVehicle = false
 
 function Notify(string)
   SetNotificationTextEntry("STRING")
@@ -15,9 +14,9 @@ end
 
 AddEventHandler('seatbelt:sounds', function(soundFile, soundVolume)
   SendNUIMessage({
-    transactionType     = 'playSound',
-    transactionFile     = soundFile,
-    transactionVolume   = soundVolume
+    transactionType = 'playSound',
+    transactionFile = soundFile,
+    transactionVolume = soundVolume
   })
 end)
 
@@ -40,8 +39,8 @@ Citizen.CreateThread(function()
     local ped = PlayerPedId()
     local car = GetVehiclePedIsIn(ped)
 
-    if car ~= 0 and (wasInCar or IsCar(car)) then
-      wasInCar = true
+    if car ~= 0 and (InVehicle or IsCar(car)) then
+      InVehicle = true
           if isUiOpen == false and not IsPlayerDead(PlayerId()) then
             if Config.Blinker then
               SendNUIMessage({displayWindow = 'true'})
@@ -49,7 +48,7 @@ Citizen.CreateThread(function()
               isUiOpen = true
           end
 
-      if beltOn then 
+      if SeatbeltON then 
         DisableControlAction(0, 75, true)  -- Disable exit vehicle when stop
         DisableControlAction(27, 75, true) -- Disable exit vehicle when Driving
 	    end
@@ -57,7 +56,7 @@ Citizen.CreateThread(function()
       speedBuffer[2] = speedBuffer[1]
       speedBuffer[1] = GetEntitySpeed(car)
 
-      if not beltOn and speedBuffer[2] ~= nil and GetEntitySpeedVector(car, true).y > 1.0 and speedBuffer[1] > (Config.Speed / 3.6) and (speedBuffer[2] - speedBuffer[1]) > (speedBuffer[1] * 0.255) then
+      if not SeatbeltON and speedBuffer[2] ~= nil and GetEntitySpeedVector(car, true).y > 1.0 and speedBuffer[1] > (Config.Speed / 3.6) and (speedBuffer[2] - speedBuffer[1]) > (speedBuffer[1] * 0.255) then
         local co = GetEntityCoords(ped)
         local fw = Fwv(ped)
         SetEntityCoords(ped, co.x + fw.x, co.y + fw.y, co.z - 0.47, true, true, true)
@@ -70,44 +69,44 @@ Citizen.CreateThread(function()
       velBuffer[1] = GetEntityVelocity(car)
         
       if IsControlJustReleased(0, Config.Control) and GetLastInputMethod(0) then
-          beltOn = not beltOn 
-          if beltOn then
+          SeatbeltON = not SeatbeltON 
+          if SeatbeltON then
           Citizen.Wait(1)
 
-        if Config.Sounds then  
-        TriggerEvent("seatbelt:sounds", "buckle", Config.Volume)
-        end
-        if Config.Notification then
-        Notify(Config.Strings.seatbelt_on)
-        end
-        
-        if Config.Blinker then
-        SendNUIMessage({displayWindow = 'false'})
-        end
-        isUiOpen = true 
-      else 
-        if Config.Notification then
-        Notify(Config.Strings.seatbelt_off)
-        end
+            if Config.Sounds then  
+            TriggerEvent("seatbelt:sounds", "buckle", Config.Volume)
+            end
+            if Config.Notification then
+            Notify(Config.Strings.seatbelt_on)
+            end
+            
+            if Config.Blinker then
+            SendNUIMessage({displayWindow = 'false'})
+            end
+            isUiOpen = true 
+          else 
+            if Config.Notification then
+            Notify(Config.Strings.seatbelt_off)
+            end
 
-        if Config.Sounds then
-        TriggerEvent("seatbelt:sounds", "unbuckle", Config.Volume)
-        end
+            if Config.Sounds then
+            TriggerEvent("seatbelt:sounds", "unbuckle", Config.Volume)
+            end
 
-        if Config.Blinker then
-        SendNUIMessage({displayWindow = 'true'})
-        end
-        isUiOpen = true  
-      end
+            if Config.Blinker then
+            SendNUIMessage({displayWindow = 'true'})
+            end
+            isUiOpen = true  
+          end
     end
       
-    elseif wasInCar then
-      wasInCar = false
-      beltOn = false
+    elseif InVehicle then
+      InVehicle = false
+      SeatbeltON = false
       speedBuffer[1], speedBuffer[2] = 0.0, 0.0
           if isUiOpen == true and not IsPlayerDead(PlayerId()) then
             if Config.Blinker then
-            SendNUIMessage({displayWindow = 'false'})
+              SendNUIMessage({displayWindow = 'false'})
             end
             isUiOpen = false 
           end
@@ -116,19 +115,22 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
-	while true do
-		Citizen.Wait(100)
-		if (IsPlayerDead(PlayerId()) and isUiOpen == true) or IsPauseMenuActive() then
-			SendNUIMessage({displayWindow = 'false'})
-			isUiOpen = false
-		end    
-	end
+  while true do
+    Citizen.Wait(10)
+      if IsPlayerDead(PlayerId()) or IsPauseMenuActive() then
+        if isUiOpen == true then
+          SendNUIMessage({displayWindow = 'false'})
+        end
+      elseif not SeatbeltON and not IsPauseMenuActive() and not IsPlayerDead(PlayerId()) and Config.Blinker then
+        SendNUIMessage({displayWindow = 'true'})
+      end
+  end
 end)
 
 Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(3500)
-    if not beltOn and wasInCar and not IsPauseMenuActive() and Config.LoopSound then
+    if not SeatbeltON and InVehicle and not IsPauseMenuActive() and Config.LoopSound then
       TriggerEvent("seatbelt:sounds", "seatbelt", Config.Volume)
 		end    
 	end
