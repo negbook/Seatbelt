@@ -121,7 +121,7 @@ Citizen.CreateThread(function()
         if isUiOpen == true then
           SendNUIMessage({displayWindow = 'false'})
         end
-      elseif not SeatbeltON and not IsPauseMenuActive() and not IsPlayerDead(PlayerId()) and Config.Blinker then
+      elseif not SeatbeltON and InVehicle and not IsPauseMenuActive() and not IsPlayerDead(PlayerId()) and Config.Blinker then
         SendNUIMessage({displayWindow = 'true'})
       end
   end
