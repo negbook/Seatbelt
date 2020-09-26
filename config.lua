@@ -20,3 +20,6 @@ Config.Control = 311
 -- KM/H (must be have decimal value)
 Config.Speed = 100.0
 
+Config.AlarmOnlySpeed = true
+Config.AlarmSpeed = 20
+
