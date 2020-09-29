@@ -68,7 +68,7 @@ Citizen.CreateThread(function()
       velBuffer[2] = velBuffer[1]
       velBuffer[1] = GetEntityVelocity(car)
         
-      if IsControlJustReleased(0, Config.Control) and GetLastInputMethod(0) and ShowWindow then
+      if IsControlJustReleased(0, Config.Control) and GetLastInputMethod(0) then
           SeatbeltON = not SeatbeltON 
           if SeatbeltON then
           Citizen.Wait(1)
