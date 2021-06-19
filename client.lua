@@ -10,8 +10,8 @@ local Initialed = false
 
 local function AbsolutelyVehicleIsACar(veh) local vc = GetVehicleClass(veh) ; return (vc >= 0 and vc <= 7) or (vc >= 9 and vc <= 12) or (vc >= 17 and vc <= 20) end
 local function Fwv(entity) local hr = GetEntityHeading(entity) + 90.0 ;if hr < 0.0 then hr = 360.0 + hr end ;hr = hr * 0.0174533;return {x = math.cos(hr) * 2.0, y = math.sin(hr) * 2.0} end
-local function SetSeatBeltIconON() isUiOpen = true; SendNUIMessage({displayWindow = "true"}) end 
-local function SetSeatBeltIconOFF() isUiOpen = false; SendNUIMessage({displayWindow = "false"}) end 
+local function SetSeatBeltIconON() SendNUIMessage({displayWindow = "true"}) end 
+local function SetSeatBeltIconOFF() SendNUIMessage({displayWindow = "false"}) end 
 local function SeatBeltPlaySound(soundFile,soundVolume) SendNUIMessage({transactionType = "playSound",transactionFile = soundFile,transactionVolume = soundVolume}) end 
 
 
@@ -38,6 +38,7 @@ CreateThread(function()
     while not Initialed do 
         Wait(34)
     end 
+    
     CreateThread(function()
         while true do
             Citizen.Wait(0)
@@ -49,6 +50,7 @@ CreateThread(function()
                     if Config.Blinker then
                         SetSeatBeltIconON()
                     end
+                    isUiOpen = true
                 end
                 if SeatbeltON then
                     DisableControlAction(0, 75, true) -- Disable exit vehicle when stop
@@ -71,6 +73,7 @@ CreateThread(function()
                 velBuffer[2] = velBuffer[1]
                 velBuffer[1] = GetEntityVelocity(car)
                 if IsControlJustReleased(0, Config.Control) and GetLastInputMethod(0) then
+                    
                     SeatbeltON = not SeatbeltON
                     if SeatbeltON then
                         Citizen.Wait(1)
@@ -83,6 +86,7 @@ CreateThread(function()
                         if Config.Blinker then
                             SetSeatBeltIconOFF()
                         end
+                        isUiOpen = true
                     else
                         if Config.Notification then
                             Notify(Config.Strings.seatbelt_off)
@@ -93,6 +97,7 @@ CreateThread(function()
                         if Config.Blinker then
                             SetSeatBeltIconON()
                         end
+                        isUiOpen = true
                     end
                 end
             elseif InVehicle then
@@ -103,6 +108,7 @@ CreateThread(function()
                     if Config.Blinker then
                         SetSeatBeltIconOFF()
                     end
+                    isUiOpen = false
                 end
             end
         end
