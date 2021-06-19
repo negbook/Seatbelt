@@ -4,6 +4,7 @@ local speedBuffer = {}
 local velBuffer = {}
 local SeatbeltON = false
 local InVehicle = false
+local IsDead = false 
 local InPause = false 
 local Initialed = false  
 
@@ -23,9 +24,11 @@ end
 CreateThread(function()
     while true do
         Citizen.Wait(1000)
+        local playerid = PlayerId()
         local ped = PlayerPedId()
         local car = GetVehiclePedIsIn(ped,false)
         InPause = IsPauseMenuActive()
+        IsDead = IsPlayerDead(playerid)
         Initialed = true 
     end
 end)
@@ -41,7 +44,7 @@ CreateThread(function()
             local car = GetVehiclePedIsIn(ped)
             if car ~= 0 and (InVehicle or AbsolutelyVehicleIsACar(car)) then
                 InVehicle = true
-                if isUiOpen == false and not IsPlayerDead(PlayerId()) then
+                if isUiOpen == false and not IsDead then
                     if Config.Blinker then
                         SetSeatBeltIconON()
                     end
@@ -95,7 +98,7 @@ CreateThread(function()
                 InVehicle = false
                 SeatbeltON = false
                 speedBuffer[1], speedBuffer[2] = 0.0, 0.0
-                if isUiOpen == true and not IsPlayerDead(PlayerId()) then
+                if isUiOpen == true and not IsDead then
                     if Config.Blinker then
                         SetSeatBeltIconOFF()
                     end
@@ -114,11 +117,11 @@ CreateThread(function()
                 ShowAlarm = false
                 SetSeatBeltIconOFF()
             end
-            if IsPlayerDead(PlayerId()) or InPause then
+            if IsDead or InPause then
                 if isUiOpen == true then
                     SetSeatBeltIconOFF()
                 end
-            elseif not SeatbeltON and InVehicle and not InPause and not IsPlayerDead(PlayerId()) and Config.Blinker then
+            elseif not SeatbeltON and InVehicle and not InPause and not IsDead and Config.Blinker then
                 if Config.AlarmOnlySpeed and ShowAlarm and VehSpeed > Config.AlarmSpeed then
                     SetSeatBeltIconON()
                 end
