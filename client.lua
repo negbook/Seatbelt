@@ -23,13 +23,14 @@ end
 
 CreateThread(function()
     while true do
-        Citizen.Wait(1000)
+        
         local playerid = PlayerId()
         local ped = PlayerPedId()
         local car = GetVehiclePedIsIn(ped,false)
         InPause = IsPauseMenuActive()
         IsDead = IsPlayerDead(playerid)
         Initialed = true 
+        Citizen.Wait(1000)
     end
 end)
 
